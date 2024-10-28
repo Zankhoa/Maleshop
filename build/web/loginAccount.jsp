@@ -55,6 +55,18 @@
         <p style="color: red"><%=message%></p>
         <%}%>
         
+          <% String noti=(String)request.getAttribute("noti");
+        if(noti != null){
+    %>
+        <p style="color: green"><%=noti%></p>
+        <%}%>
+        
+          <% String notication=(String)request.getAttribute("notication");
+        if(notication != null){
+    %>
+        <p style="color: green"><%=notication%></p>
+        <%}%>
+        
         <div class="form-group">
             <input type="text" name="userName" class="form-control" placeholder="userName" required="required">
         </div>
@@ -65,7 +77,9 @@
         <div class="form-group">
             <button type="submit" name="submit" class="btn btn-primary btn-block">Log in</button>
               <input type="hidden" name="service" value="login">
+               <a href="URLloginController?service=forget">Forget Password </a>
         </div>
+        
          
     </form>
         <p class="text-center"><a href="URLloginController?service=register">Create an Account</a></p>

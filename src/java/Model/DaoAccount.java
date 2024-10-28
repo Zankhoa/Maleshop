@@ -9,11 +9,14 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DaoAccount extends DBConnect {
+
+    private final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     public Account loginAccount(String userNamee, String passWordd) {
         String sql = "select * from account where username = ? and PassWord = ?";
@@ -85,10 +88,10 @@ public class DaoAccount extends DBConnect {
         }
         return null;
     }
-    
-      public Vector<Account> getAccountt(String sql) {
+
+    public Vector<Account> getAccountt(String sql) {
         Vector<Account> vector = new Vector<>();
-          try {
+        try {
             Statement state = conn.createStatement();
             ResultSet rs = state.executeQuery(sql);
             while (rs.next()) {
@@ -107,16 +110,68 @@ public class DaoAccount extends DBConnect {
         }
         return vector;
     }
+    
+     public int findIdByEmail(String email) {
+        String sql = "select AccountID from account where email = ?";
+        int userId = -1;
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setString(1, email);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                userId = rs.getInt("AccountID");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return userId;
+    }
+    
+    public boolean checkEmail(String email) {
+        String sql = "select * from account where email = ?";
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setString(1, email);
+            ResultSet rs = pre.executeQuery();
+            if (!rs.next()) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
 
+    public String generateRandomString() {
+        StringBuilder sb = new StringBuilder(8);
+        Random r = new Random();
+        for (int i = 0; i < 8; i++) {
+            int index = r.nextInt(CHARACTERS.length());
+            sb.append(CHARACTERS.charAt(index));
+        }
+        return sb.toString();
+    }
 
+    public void changePassword(int AccountID, String newPassword) {
+        String sqlupdate = "UPDATE [dbo].[Account]\n"
+                + "   SET PassWord = ?\n"
+                + " WHERE AccountID = ?";
+        try {
+            PreparedStatement pre = conn.prepareStatement(sqlupdate);
+            pre.setInt(2, AccountID);
+            pre.setString(1, newPassword);
+            pre.executeUpdate();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         DaoAccount dao = new DaoAccount();
-        int n = dao.insert(new Account(3,'0', "khoapv", "12345", "khoavan", "0123456789", "khoagmial.vom"));
-        Vector<Account> vector = dao.getAccountt("select * from Account");
-        for (Account account : vector) {
-            System.out.println(account);
-        }
+       int id = 1;
+       STring 
     }
 
 }

@@ -4,6 +4,7 @@
  */
 package Controller;
 
+import Email.Email;
 import Entity.Account;
 import Model.DaoAccount;
 import com.oracle.wls.shaded.org.apache.bcel.generic.AALOAD;
@@ -25,53 +26,76 @@ public class loginController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-       HttpSession session = request.getSession(true);
+        HttpSession session = request.getSession(true);
         DaoAccount dao = new DaoAccount();
-        String service = request.getParameter("service");
-         
-        if(service.equals("logout")){
-             session.invalidate();
-             response.sendRedirect("loginAccount.jsp");
-         }
+        Email e = new Email();
         
-        if(service.equals("login")){    
+        String service = request.getParameter("service");
+
+        if (service.equals("logout")) {
+            session.invalidate();
+            response.sendRedirect("loginAccount.jsp");
+        }
+
+        if (service.equals("login")) {
             String submit = request.getParameter("submit");
-            if(submit == null){
+            if (submit == null) {
                 request.getRequestDispatcher("loginAccount.jsp").forward(request, response);
             }
-             String userName = request.getParameter("userName");
+            String userName = request.getParameter("userName");
             String passWord = request.getParameter("passWord");
-           Account ngu = dao.loginAccount(userName, passWord);
-            if(ngu != null){
+            Account ngu = dao.loginAccount(userName, passWord);
+            if (ngu != null) {
                 session.setAttribute("acc", ngu);
                 response.sendRedirect("homee");
             } else {
                 String message = "the account username or password wrong";
                 request.setAttribute("message", message);
-                 request.getRequestDispatcher("loginAccount.jsp").forward(request, response);
+                request.getRequestDispatcher("loginAccount.jsp").forward(request, response);
             }
         }
-        
-        if(service.equals("register")){
+
+        if (service.equals("register")) {
             String submit = request.getParameter("submit");
-            if(submit == null){
+            if (submit == null) {
                 request.getRequestDispatcher("register.jsp").forward(request, response);
             } else {
-               int isAdmin = 1; 
-               String userName = request.getParameter("userName"); 
-               String passWord = request.getParameter("passWord"); 
-               String fullname = request.getParameter("fullname"); 
-               String phone = request.getParameter("phone"); 
-               String email = request.getParameter("email");
-               
-               Account acc = new Account(isAdmin, userName, passWord, fullname, phone, email);
-               int n = dao.insert(acc);
-               response.sendRedirect("loginAccount.jsp");
+                int isAdmin = 0;
+                String userName = request.getParameter("userName");
+                String passWord = request.getParameter("passWord");
+                String fullname = request.getParameter("fullname");
+                String phone = request.getParameter("phone");
+                String email = request.getParameter("email");
+                Account acc = new Account(isAdmin, userName, passWord, fullname, phone, email);
+                int n = dao.insert(acc);
+                request.setAttribute("noti", "Register successful so please login !");
+                request.getRequestDispatcher("loginAccount.jsp").forward(request, response);
                
             }
         }
-        
-        
+
+        if (service.equals("forget")) {
+            String submit = request.getParameter("submit");
+            if (submit == null) {
+                request.getRequestDispatcher("forgetPassword.jsp").forward(request, response);
+            } else {
+                String email = request.getParameter("email");
+                 boolean check = dao.checkEmail(email);
+                 if(!check ){
+                   request.setAttribute("error", "Email dont exist, please re-enter");
+                   request.getRequestDispatcher("forgetPassword.jsp").forward(request, response);
+                 } else {
+                  int id = dao.findIdByEmail(email);
+                  String password = dao.generateRandomString();
+                  dao.changePassword(id, password);
+                  e.sendPasswordEmail(email, password);
+                  request.setAttribute("notication", "Please check mail to get new password!");
+                request.getRequestDispatcher("loginAccount.jsp").forward(request, response);
+                 }
+               
+            }
+        }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

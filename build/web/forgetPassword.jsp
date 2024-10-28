@@ -4,6 +4,7 @@
     Author     : user
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -48,41 +49,20 @@
         
         <div class="login-form">
     <form action="URLloginController" method="POST">
-        <h2 class="text-center">Log in</h2>     
-       <% String message=(String)request.getAttribute("message");
-        if(message != null){
-    %>
-        <p style="color: red"><%=message%></p>
+        <h2 class="text-center">Email</h2> 
+        <%  String error=(String)request.getAttribute("error");
+        if(error != null){%>
+        <p style="color: red"> <%=error%><p>
         <%}%>
-        
-          <% String noti=(String)request.getAttribute("noti");
-        if(noti != null){
-    %>
-        <p style="color: green"><%=noti%></p>
-        <%}%>
-        
-          <% String notication=(String)request.getAttribute("notication");
-        if(notication != null){
-    %>
-        <p style="color: green"><%=notication%></p>
-        <%}%>
-        
         <div class="form-group">
-            <input type="text" name="userName" class="form-control" placeholder="userName" required="required">
+            <input type="text" name="email" class="form-control" placeholder="Enter email" required="required">
         </div>
         <div class="form-group">
-            <input type="password" name="passWord" class="form-control" placeholder="passWord" required="required">
+            <button type="submit" name="submit" class="btn btn-primary btn-block">Register</button>
+             <input type="hidden" name="service" value="forget">
         </div>
-        
-        <div class="form-group">
-            <button type="submit" name="submit" class="btn btn-primary btn-block">Log in</button>
-              <input type="hidden" name="service" value="login">
-               <a href="URLloginController?service=forget">Forget Password </a>
-        </div>
-        
-         
     </form>
-        <p class="text-center"><a href="URLloginController?service=register">Create an Account</a></p>
+
 </div>
     </body>
 </html>
