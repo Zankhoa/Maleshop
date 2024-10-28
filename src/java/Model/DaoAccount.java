@@ -170,8 +170,7 @@ public class DaoAccount extends DBConnect {
 
     public static void main(String[] args) {
         DaoAccount dao = new DaoAccount();
-       int id = 1;
-       STring 
+  
     }
 
 }

@@ -43,10 +43,7 @@
 }
 </style>
     </head>
-    
     <body>
-      
-        
         <div class="login-form">
     <form action="URLloginController" method="POST">
         <h2 class="text-center">Email</h2> 
